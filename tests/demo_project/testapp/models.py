@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from django.utils.html import format_html
 
 from image_cropping import ImageCropField, ImageRatioField
@@ -26,11 +26,11 @@ class Author(models.Model):
 
 class Addresses(models.Model):
     author = models.ForeignKey(Author, related_name="Author",
-                              on_delete=models.CASCADE)
+                            on_delete=models.CASCADE)
     address = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     status = models.BooleanField(_("Status"), help_text=_('Active?'),
-                                 default=True)
+                                default=True)
 
     class Meta:
         ordering = ('pk',)
@@ -67,16 +67,16 @@ def last_number():
 class Invoice(models.Model):
 
     customer = models.ForeignKey(Customer, related_name="customer",
-                                 on_delete=models.CASCADE)
+                                on_delete=models.CASCADE)
     registered = models.BooleanField(_("Registered"),
-                                     help_text=_('Registered yet?'))
+                                    help_text=_('Registered yet?'))
     sent = models.BooleanField(_("Sent"), help_text=_('Invoice sent?'))
     paid = models.BooleanField(_("Paid"),
-                               help_text=_('Invoice paid?'))
+                            help_text=_('Invoice paid?'))
     date = models.DateTimeField(_('Creation date'))
     invoice_number = models.CharField(_('Invoice Number'),
-                                      default=last_number,
-                                      max_length=50)
+                                    default=last_number,
+                                    max_length=50)
     description1 = models.TextField(_('Description header'), blank=True)
     description2 = models.TextField(_('Description footer'), blank=True)
     subtotal = models.CharField(_('Subtotal'), blank=True,
@@ -86,10 +86,10 @@ class Invoice(models.Model):
                                     max_length=200,
                                     help_text=_('Calculated field'))
     subtotal_retentions = models.CharField(_('Subtotal Retentions'),
-                                           blank=True, max_length=200,
-                                           help_text=_('Calculated field'))
+                                        blank=True, max_length=200,
+                                        help_text=_('Calculated field'))
     total = models.CharField(_('Total'), max_length=200, blank=True,
-                             help_text=_('Calculated field'))
+                            help_text=_('Calculated field'))
 
     def __unicode__(self):
         return str(self.invoice_number) + "->" + str(self.date)

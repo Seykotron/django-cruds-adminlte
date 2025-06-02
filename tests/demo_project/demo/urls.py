@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.conf.urls import url, include
+from django.urls import re_path as url, include
 from django.urls import path
 
 from django.contrib import admin
@@ -38,4 +38,4 @@ urlpatterns += crud_for_app('auth', login_required=True, cruds_url='lte')
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL,
-                          document_root=settings.MEDIA_ROOT)
+                        document_root=settings.MEDIA_ROOT)

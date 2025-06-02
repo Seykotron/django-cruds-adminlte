@@ -6,24 +6,37 @@ Free as freedom will be 26/8/2016
 @author: luisza
 '''
 
+import copy
+import inspect
+import types
+from collections import OrderedDict
 
-from django.conf.urls import url, include
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import Permission
+from django.contrib.auth.views import redirect_to_login
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import PermissionDenied
+from django.db import transaction
+from django.db.models import Q
+from django.db.models.fields.related import ForeignKey, ManyToManyField
+from django.forms.models import modelform_factory
+from django.forms.widgets import HiddenInput
+from django.http import Http404, JsonResponse
 from django.http.response import HttpResponseRedirect, HttpResponseForbidden
-from django.urls.base import reverse_lazy, reverse
+from django.shortcuts import get_object_or_404
+from django.template.loader import render_to_string
+from django.urls import re_path as url, include
+from django.urls import reverse_lazy, reverse
 from django.urls.exceptions import NoReverseMatch
+from django.utils.decorators import method_decorator
+from django.utils.encoding import force_str
+from django.utils.translation import gettext_lazy as _
 from django.views import View
 from django.views.generic import (ListView, CreateView, DeleteView,
-                                  UpdateView, DetailView)
+                                UpdateView, DetailView)
+
 from cruds_adminlte import utils
-from django.contrib.auth.models import Permission
-from django.contrib.contenttypes.models import ContentType
-from django.utils.translation import ugettext_lazy as _
-from django.db.models.query_utils import Q
-from django.shortcuts import get_object_or_404
 from cruds_adminlte.filter import get_filters
-from django.template.loader import render_to_string
-import types
 
 
 class CRUDMixin(object):
@@ -197,7 +210,7 @@ class CRUDView(object):
             myview = Myclass()
             urlpatterns = [
                 url('path', include(myview.get_urls()))  # also support
-                                                         # namespace
+                                                        # namespace
             ]
 
         The default behavior is check_login = True and check_perms=True but
@@ -219,13 +232,13 @@ class CRUDView(object):
             class Myclass(CRUDView):
                 model = Customer
                 perms = { 'create': ['applabel.mycustom_perm'],
-                          'list': [],
-                          'delete': [],
-                          'update': [],
-                          'detail': []
+                            'list': [],
+                            'delete': [],
+                            'update': [],
+                            'detail': []
                         }
         If check_perms = True we will add default django model perms
-         (<applabel>.[add|change|delete|view]_<model>)
+        (<applabel>.[add|change|delete|view]_<model>)
 
         You can also overwrite add and update forms
 
@@ -283,7 +296,7 @@ class CRUDView(object):
             class Myclass(CRUDView):
                 model = Customer
                 views_available = ['create', 'list', 'delete',
-                                   'update', 'detail']
+                                'update', 'detail']
 
     """
 
@@ -622,8 +635,8 @@ class CRUDView(object):
         except:
             notfollow = True
         if not notfollow and not Permission.objects.filter(content_type=model,
-                                                           codename="view_%s" %
-                                                           (name, )).exists():
+                                                        codename="view_%s" %
+                                                        (name, )).exists():
             Permission.objects.create(
                 content_type=model,
                 codename="view_%s" % (name,),
@@ -695,37 +708,37 @@ class CRUDView(object):
         except AttributeError:
             pre = ""
         base_name = "%s%s/%s" % (pre, self.model._meta.app_label,
-                                 self.model.__name__.lower())
+                                self.model.__name__.lower())
         myurls = []
         if 'list' in self.views_available:
             myurls.append(url("^%s/list$" % (base_name,),
-                              self.list,
-                              name=utils.crud_url_name(
-                                  self.model, 'list', prefix=self.urlprefix)))
+                                self.list,
+                                name=utils.crud_url_name(
+                                    self.model, 'list', prefix=self.urlprefix)))
         if 'create' in self.views_available:
             myurls.append(url("^%s/create$" % (base_name,),
-                              self.create,
-                              name=utils.crud_url_name(
-                                  self.model, 'create', prefix=self.urlprefix))
-                          )
+                                self.create,
+                                name=utils.crud_url_name(
+                                    self.model, 'create', prefix=self.urlprefix))
+                        )
         if 'detail' in self.views_available:
             myurls.append(url('^%s/(?P<pk>[^/]+)$' % (base_name,),
-                              self.detail,
-                              name=utils.crud_url_name(
-                                  self.model, 'detail', prefix=self.urlprefix))
-                          )
+                                self.detail,
+                                name=utils.crud_url_name(
+                                    self.model, 'detail', prefix=self.urlprefix))
+                        )
         if 'update' in self.views_available:
             myurls.append(url("^%s/(?P<pk>[^/]+)/update$" % (base_name,),
-                              self.update,
-                              name=utils.crud_url_name(
-                                  self.model, 'update', prefix=self.urlprefix))
-                          )
+                                self.update,
+                                name=utils.crud_url_name(
+                                    self.model, 'update', prefix=self.urlprefix))
+                        )
         if 'delete' in self.views_available:
             myurls.append(url(r"^%s/(?P<pk>[^/]+)/delete$" % (base_name,),
-                              self.delete,
-                              name=utils.crud_url_name(
-                                  self.model, 'delete', prefix=self.urlprefix))
-                          )
+                                self.delete,
+                                name=utils.crud_url_name(
+                                    self.model, 'delete', prefix=self.urlprefix))
+                        )
 
         myurls += self.add_inlines(base_name)
         return myurls

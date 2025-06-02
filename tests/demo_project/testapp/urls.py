@@ -1,6 +1,6 @@
-from django.conf.urls import url, include
+from django.urls import re_path as url, include
 from testapp.views import (AuthorCRUD, InvoiceCRUD, IndexView, CustomerCRUD,
-                           LineCRUD, AddressCRUD)
+                        LineCRUD, AddressCRUD)
 
 authorcrud = AuthorCRUD()
 invoicecrud = InvoiceCRUD()

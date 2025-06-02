@@ -2,7 +2,7 @@ from crispy_forms.bootstrap import TabHolder, Tab, FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Submit, HTML
 from django import forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from image_cropping import ImageCropWidget
 
 from cruds_adminlte import (DatePickerWidget,
@@ -25,7 +25,7 @@ class CustomerForm(forms.ModelForm):
             'time': TimePickerWidget(attrs={'icon': 'fa-clock-o'}),
             'datetime': DateTimePickerWidget(
                 attrs={'format': 'mm/dd/yyyy hh:ii:ss',
-                       'icon': 'fa-calendar'}),
+                    'icon': 'fa-calendar'}),
             'color': ColorPickerWidget,
             'information': CKEditorWidget(attrs={'lang': 'es'}),
         }

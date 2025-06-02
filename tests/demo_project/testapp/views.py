@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from cruds_adminlte.crud import CRUDView
 from cruds_adminlte.inline_crud import InlineAjaxCRUD
@@ -25,7 +25,7 @@ class Invoice_AjaxCRUD(InlineAjaxCRUD):
     add_form = InvoiceForm
     update_form = InvoiceForm
     list_fields = ['invoice_number', 'subtotal_iva', 'registered', 'sent',
-                   'paid', 'date']
+                'paid', 'date']
     title = _("Invoice")
 
 
@@ -71,7 +71,7 @@ class Address_AjaxCRUD(InlineAjaxCRUD):
     update_form = AddressesForm
     fields = ['address', 'city']
     title = _("Addresses")
-   # template_name_base = "cruds/ajax"
+    # template_name_base = "cruds/ajax"
 
 
 class AuthorCRUD(CRUDView):
@@ -91,7 +91,7 @@ class Lines_AjaxCRUD(InlineAjaxCRUD):
     add_form = LineForm
     update_form = LineForm
     list_fields = ['reference', 'concept', 'quantity', 'unit', 'unit_price',
-                   'amount']
+                'amount']
 
 
 class LineFormFilter(forms.Form):
@@ -110,17 +110,17 @@ class InvoiceCRUD(CRUDView):
     update_form = InvoiceForm
     related_fields = ['customer']
     fields = ['customer', 'registered', 'sent', 'paid', 'date',
-              'invoice_number', 'description1', 'description2', 'subtotal',
-              'subtotal_iva', 'subtotal_retentions', 'total']
+            'invoice_number', 'description1', 'description2', 'subtotal',
+            'subtotal_iva', 'subtotal_retentions', 'total']
     list_fields = ['customer', 'registered', 'sent', 'paid', 'date',
-                   'invoice_number', 'description1', 'description2',
-                   'subtotal', 'subtotal_iva', 'subtotal_retentions', 'total']
+                'invoice_number', 'description1', 'description2',
+                'subtotal', 'subtotal_iva', 'subtotal_retentions', 'total']
     display_fields = ['customer', 'registered', 'sent', 'paid', 'date',
-                      'invoice_number', 'description1', 'description2',
-                      'subtotal', 'subtotal_iva', 'subtotal_retentions',
-                      'total']
+                    'invoice_number', 'description1', 'description2',
+                    'subtotal', 'subtotal_iva', 'subtotal_retentions',
+                    'total']
     list_filter = ['customer', 'invoice_number',
-                   'sent', 'paid', 'date', filterAddress]
+                'sent', 'paid', 'date', filterAddress]
     inlines = [Lines_AjaxCRUD]
     #  views_available = ['create', 'list',  'detail'] # original actions
     views_available = ['create', 'list', 'update', 'detail', 'delete']
